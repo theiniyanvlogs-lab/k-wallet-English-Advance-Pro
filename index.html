@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Talkies Chatbot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <span class="icon">🎁</span>
+    <div>
+      <h1>iniyan.talkies K'wallet Globe</h1>
+      <p>ENGLISH REPLY ONLY</p>
+    </div>
+  </div>
+
+  <button id="subBtn" class="sub-btn"></button>
+
+  <button type="button" class="clear-btn" onclick="clearChat()">Clear Chat</button>
+</header>
+
+<main class="chat-area" id="chatBox"></main>
+
+<footer class="input-bar">
+  <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off"/>
+
+  <button type="button" class="voice-btn" onclick="startVoice()">🎤</button>
+  <button type="button" class="send-btn" onclick="sendMessage()">➤</button>
+</footer>
+
+<div id="expiredBox" class="expired-box">
+  <p>❌ Subscription Finished</p>
+  <a href="https://wa.me/917200893968?text=Hi,%20I%20need%20new%20subscription%20password"
+     target="_blank" class="whatsapp-btn">
+     📲 Get New Password on WhatsApp
+  </a>
+</div>
+
+<script src="./script.js" defer></script>
+</body>
+</html>
