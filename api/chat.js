@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 export default async function handler(req, res) {
 
   // ✅ Only POST allowed
@@ -8,7 +11,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message } = req.body;
+    const { message, password, deviceId } = req.body;
 
     // ✅ Validate input
     if (!message) {
@@ -17,7 +20,47 @@ export default async function handler(req, res) {
       });
     }
 
+    // ===============================
+    // ✅ Load registry.json Password System
+    // ===============================
+    const filePath = path.join(process.cwd(), "data", "registry.json");
+    const registryData = JSON.parse(fs.readFileSync(filePath, "utf8"));
+
+    // 🔑 Password Check
+    if (!password || !registryData.passwords[password]) {
+      return res.status(401).json({
+        error: "❌ Invalid Subscription Password"
+      });
+    }
+
+    const userData = registryData.passwords[password];
+
+    // ⏳ Expiry Check
+    const today = new Date();
+    const expiryDate = new Date(userData.expiry);
+
+    if (today > expiryDate) {
+      return res.status(403).json({
+        error: "❌ Subscription Expired"
+      });
+    }
+
+    // 📱 Device Lock Check (One Phone Only)
+    if (userData.device && userData.device !== deviceId) {
+      return res.status(403).json({
+        error: "❌ Password already used on another device"
+      });
+    }
+
+    // ✅ Save deviceId if first time
+    if (!userData.device) {
+      registryData.passwords[password].device = deviceId;
+      fs.writeFileSync(filePath, JSON.stringify(registryData, null, 2));
+    }
+
+    // ===============================
     // ✅ API Key check
+    // ===============================
     if (!process.env.GROQ_API_KEY) {
       return res.status(500).json({
         error: "Missing GROQ_API_KEY in Vercel Environment Variables"
@@ -48,7 +91,6 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
-
           messages: [
             {
               role: "system",
@@ -90,7 +132,8 @@ export default async function handler(req, res) {
     return res.status(200).json({
       reply: data.choices[0].message.content,
       youtube: youtubeLink,
-      instagram: instagramLink
+      instagram: instagramLink,
+      expiry: userData.expiry
     });
 
   } catch (err) {
