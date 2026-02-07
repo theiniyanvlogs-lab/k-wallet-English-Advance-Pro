@@ -13,11 +13,10 @@ export default async function handler(req, res) {
 
     if (!process.env.GROQ_API_KEY) {
       return res.status(500).json({
-        error: "Missing GROQ_API_KEY in Vercel Environment Variables"
+        error: "Missing GROQ_API_KEY in Vercel"
       });
     }
 
-    // ✅ Call Groq AI API
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -32,7 +31,7 @@ export default async function handler(req, res) {
             {
               role: "system",
               content:
-                "Reply ONLY in bullet points. English only. Each line start with '- '"
+                "Reply only in bullet points. English only."
             },
             { role: "user", content: message }
           ]
@@ -42,9 +41,9 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (!response.ok) {
+    if (!data.choices || !data.choices[0]?.message?.content) {
       return res.status(500).json({
-        error: data.error?.message || "Groq API Failed"
+        error: "No reply from Groq"
       });
     }
 
