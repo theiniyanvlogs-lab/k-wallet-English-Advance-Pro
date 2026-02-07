@@ -4,41 +4,84 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Talkies Chatbot</title>
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header class="topbar">
-  <div class="logo">
-    <span class="icon">🎁</span>
-    <div>
-      <h1>iniyan.talkies K'wallet Globe</h1>
-      <p>ENGLISH REPLY ONLY</p>
+  <!-- HEADER -->
+  <header class="topbar">
+
+    <div class="logo">
+      <span class="icon">🎁</span>
+      <div>
+        <h1>iniyan.talkies K'wallet Globe</h1>
+        <p>ENGLISH REPLY ONLY</p>
+      </div>
     </div>
+
+    <!-- Subscription Expiry Button -->
+    <button id="subBtn" class="sub-btn">
+      EXP: --/--/----
+    </button>
+
+    <!-- Clear Chat -->
+    <button type="button" class="clear-btn" onclick="clearChat()">
+      Clear Chat
+    </button>
+
+  </header>
+
+  <!-- CHAT AREA -->
+  <main class="chat-area" id="chatBox"></main>
+
+  <!-- INPUT BAR -->
+  <footer class="input-bar">
+
+    <!-- User Input -->
+    <input
+      type="text"
+      id="userInput"
+      placeholder="Type your message..."
+      autocomplete="off"
+    />
+
+    <!-- Voice Button -->
+    <button type="button" class="voice-btn" onclick="startVoice()">
+      🎤
+    </button>
+
+    <!-- Send Button -->
+    <button type="button" class="send-btn" onclick="sendMessage()">
+      ➤
+    </button>
+
+  </footer>
+
+  <!-- Expired Subscription Box -->
+  <div id="expiredBox" class="expired-box">
+    <p>❌ Subscription Finished</p>
+
+    <a
+      href="https://wa.me/917200893968?text=Hi,%20I%20need%20new%20subscription%20password"
+      target="_blank"
+      class="whatsapp-btn"
+    >
+      📲 Get New Password on WhatsApp
+    </a>
   </div>
 
-  <button id="subBtn" class="sub-btn"></button>
+  <!-- =============================== -->
+  <!-- ✅ Registry Password JSON Path   -->
+  <!-- =============================== -->
+  <script>
+    const REGISTRY_PATH = "./data/registry.json";
+  </script>
 
-  <button type="button" class="clear-btn" onclick="clearChat()">Clear Chat</button>
-</header>
+  <!-- Main Script -->
+  <script src="./script.js" defer></script>
 
-<main class="chat-area" id="chatBox"></main>
-
-<footer class="input-bar">
-  <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off"/>
-
-  <button type="button" class="voice-btn" onclick="startVoice()">🎤</button>
-  <button type="button" class="send-btn" onclick="sendMessage()">➤</button>
-</footer>
-
-<div id="expiredBox" class="expired-box">
-  <p>❌ Subscription Finished</p>
-  <a href="https://wa.me/917200893968?text=Hi,%20I%20need%20new%20subscription%20password"
-     target="_blank" class="whatsapp-btn">
-     📲 Get New Password on WhatsApp
-  </a>
-</div>
-
-<script src="./script.js" defer></script>
 </body>
 </html>
