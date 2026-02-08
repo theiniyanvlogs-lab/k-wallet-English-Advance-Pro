@@ -14,40 +14,56 @@ window.addEventListener(
   { once: true }
 );
 
-/* ✅ Load Passwords */
+/* ✅ Load Passwords from registry.json */
 async function loadPasswords() {
   let res = await fetch(REGISTRY_PATH);
   let data = await res.json();
   return data.validPasswords;
 }
 
-/* ✅ Subscription Setup */
+/* ✅ Subscription Setup (WhatsApp Trial Flow) */
 async function setupSubscription() {
   let storedExpiry = localStorage.getItem(expiryKey);
+
+  /* ✅ If already activated, continue */
   if (storedExpiry) {
     checkExpiry();
     return;
   }
 
-  let entered = prompt("Enter TP Trial Password or SP Subscription Password:");
+  /* ✅ Show WhatsApp Box Immediately */
+  document.getElementById("expiredBox").style.display = "block";
+
+  /* ✅ Ask Password After User Gets It */
+  let entered = prompt(
+    "🔑 Enter TP Trial Password (7 Days) or SP Subscription Password (30 Days):"
+  );
+
   if (!entered) {
-    alert("Password Required!");
+    alert("Password Required! Please get password from WhatsApp.");
     return;
   }
 
   let valid = await loadPasswords();
+
   if (!valid.includes(entered)) {
-    alert("❌ Invalid Password");
+    alert("❌ Invalid Password. Please request correct password in WhatsApp.");
     return;
   }
 
+  /* ✅ Hide WhatsApp Box After Correct Password */
+  document.getElementById("expiredBox").style.display = "none";
+
+  /* ✅ Set Days */
   let days = entered.startsWith("SP") ? 30 : 7;
 
   let expiryDate = new Date();
   expiryDate.setDate(expiryDate.getDate() + days);
+
   localStorage.setItem(expiryKey, expiryDate.toISOString());
 
-  alert(`✅ Activated for ${days} Days`);
+  alert(`✅ Activated Successfully for ${days} Days`);
+
   checkExpiry();
 }
 
@@ -60,17 +76,22 @@ function checkExpiry() {
   let dd = String(expiryDate.getDate()).padStart(2, "0");
   let mm = String(expiryDate.getMonth() + 1).padStart(2, "0");
   let yyyy = expiryDate.getFullYear();
+
   subBtn.innerText = `EXP: ${dd}/${mm}/${yyyy}`;
 
+  /* ✅ Expired */
   if (today > expiryDate) {
     document.getElementById("expiredBox").style.display = "block";
+
     document.querySelector(".send-btn").disabled = true;
     document.querySelector(".voice-btn").disabled = true;
     document.getElementById("userInput").disabled = true;
+
     localStorage.removeItem(expiryKey);
   }
 }
 
+/* ✅ Run Subscription Check on Page Load */
 window.onload = setupSubscription;
 
 /* ✅ SEND MESSAGE + SHOW 5 YT + 5 IG BUTTONS */
@@ -81,11 +102,11 @@ async function sendMessage() {
 
   let chatBox = document.getElementById("chatBox");
 
-  // User Message
+  /* User Message */
   chatBox.innerHTML += `<div class="msg user">${msg}</div>`;
   input.value = "";
 
-  // Bot Placeholder
+  /* Bot Placeholder */
   let botDiv = document.createElement("div");
   botDiv.className = "msg bot";
   botDiv.innerHTML = "🤖 Thinking...";
@@ -107,6 +128,7 @@ async function sendMessage() {
 
     let keyword = msg.split(" ")[0];
 
+    /* ✅ Reply + Buttons */
     botDiv.innerHTML = `
       <p>${data.reply.replace(/\n/g, "<br>")}</p>
 
@@ -119,22 +141,30 @@ async function sendMessage() {
         </a>
 
         <a target="_blank"
-          href="https://www.youtube.com/results?search_query=${encodeURIComponent(keyword + " recipe")}">
+          href="https://www.youtube.com/results?search_query=${encodeURIComponent(
+            keyword + " recipe"
+          )}">
           🍳 ${keyword} Recipe
         </a>
 
         <a target="_blank"
-          href="https://www.youtube.com/results?search_query=${encodeURIComponent(keyword + " shorts")}">
+          href="https://www.youtube.com/results?search_query=${encodeURIComponent(
+            keyword + " shorts"
+          )}">
           🎬 ${keyword} Shorts
         </a>
 
         <a target="_blank"
-          href="https://www.youtube.com/results?search_query=${encodeURIComponent("hotel style " + keyword)}">
+          href="https://www.youtube.com/results?search_query=${encodeURIComponent(
+            "hotel style " + keyword
+          )}">
           🏨 Hotel Style ${keyword}
         </a>
 
         <a target="_blank"
-          href="https://www.youtube.com/results?search_query=${encodeURIComponent(keyword)}">
+          href="https://www.youtube.com/results?search_query=${encodeURIComponent(
+            keyword
+          )}">
           🔍 View All Results
         </a>
       </div>
@@ -169,6 +199,7 @@ async function sendMessage() {
       </div>
     `;
 
+    /* Auto Scroll */
     chatBox.scrollTop = chatBox.scrollHeight;
   } catch (err) {
     botDiv.innerHTML = "❌ Server Error";
