@@ -147,7 +147,7 @@ body {
   border: 1px solid #333;
 }
 
-/* ✅ LINK BOX (YT + IG Buttons inside chat) */
+/* ✅ LINK BOX */
 .link-box {
   margin-top: 12px;
   padding: 12px;
@@ -178,10 +178,9 @@ body {
 }
 
 /* ===================================================== */
-/* ✅ NEW FEATURE: 🌐 Tamil Want Button + Output Styling */
+/* 🌐 Tamil Translate Button */
 /* ===================================================== */
 
-/* Tamil Translate Button */
 .tamil-btn {
   margin-top: 12px;
   width: 100%;
@@ -192,7 +191,6 @@ body {
   font-weight: bold;
   cursor: pointer;
   color: white;
-
   background: linear-gradient(90deg, #ff9800, #ff5722);
   transition: 0.3s;
 }
@@ -207,7 +205,6 @@ body {
   cursor: not-allowed;
 }
 
-/* Tamil Output Box */
 .tamil-output {
   margin-top: 12px;
 }
@@ -218,14 +215,14 @@ body {
   padding: 14px;
   margin-top: 10px;
   border-radius: 12px;
-  color: #fff;
   font-size: 15px;
   line-height: 1.6;
 }
 
 /* ===================================================== */
-
 /* ✅ INPUT BAR */
+/* ===================================================== */
+
 .input-bar {
   display: flex;
   gap: 10px;
@@ -265,7 +262,58 @@ body {
   color: black;
 }
 
+/* ===================================================== */
+/* 🎤 PREMIUM MIC ANIMATION + Listening Text */
+/* ===================================================== */
+
+.voice-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.listening-text {
+  display: none;
+  font-size: 12px;
+  margin-top: 4px;
+  color: gold;
+  font-weight: bold;
+  animation: blinkText 1s infinite;
+}
+
+@keyframes blinkText {
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+.voice-btn.listening {
+  background: crimson !important;
+  color: white !important;
+  box-shadow: 0 0 18px crimson;
+  animation: micPulse 0.8s infinite alternate;
+}
+
+@keyframes micPulse {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 10px crimson;
+  }
+  to {
+    transform: scale(1.12);
+    box-shadow: 0 0 25px gold;
+  }
+}
+
+.voice-btn.listening + .listening-text {
+  display: block;
+}
+
+/* ===================================================== */
 /* ✅ EXPIRED BOX */
+/* ===================================================== */
+
 .expired-box {
   display: none;
   text-align: center;
@@ -277,10 +325,8 @@ body {
 .expired-box p {
   font-size: 16px;
   margin-bottom: 12px;
-  color: white;
 }
 
-/* WHATSAPP BUTTON */
 .whatsapp-btn {
   display: inline-block;
   background: #25d366;
@@ -295,7 +341,10 @@ body {
   opacity: 0.8;
 }
 
+/* ===================================================== */
 /* ✅ Typing Dots Animation */
+/* ===================================================== */
+
 .typing {
   display: flex;
   gap: 6px;
@@ -329,7 +378,10 @@ body {
   }
 }
 
+/* ===================================================== */
 /* ✅ MOBILE RESPONSIVE */
+/* ===================================================== */
+
 @media (max-width: 768px) {
   .topbar {
     flex-direction: column;
