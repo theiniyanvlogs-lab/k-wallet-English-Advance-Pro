@@ -1,8 +1,10 @@
 let expiryKey = "chatbot_expiry";
 
-/* ✅ CLICK SOUND UNLOCK (Chrome Fix) */
+/* ✅ CLICK SOUND UNLOCK */
 let clickSound;
+let replySound;
 
+/* ✅ Unlock Sounds After First Click */
 window.addEventListener(
   "click",
   () => {
@@ -10,31 +12,33 @@ window.addEventListener(
       clickSound = new Audio("/click.mp3");
       clickSound.volume = 1.0;
     }
+
+    if (!replySound) {
+      replySound = new Audio("/reply.mp3");
+      replySound.volume = 1.0;
+    }
   },
   { once: true }
 );
 
-/* ✅ Load Passwords from registry.json */
+/* ✅ Load Passwords */
 async function loadPasswords() {
   let res = await fetch(REGISTRY_PATH);
   let data = await res.json();
   return data.validPasswords;
 }
 
-/* ✅ Subscription Setup (WhatsApp Trial Flow) */
+/* ✅ Subscription Setup */
 async function setupSubscription() {
   let storedExpiry = localStorage.getItem(expiryKey);
 
-  /* ✅ If already activated, continue */
   if (storedExpiry) {
     checkExpiry();
     return;
   }
 
-  /* ✅ Show WhatsApp Box Immediately */
   document.getElementById("expiredBox").style.display = "block";
 
-  /* ✅ Ask Password After User Gets It */
   let entered = prompt(
     "🔑 Enter TP Trial Password (7 Days) or SP Subscription Password (30 Days):"
   );
@@ -51,10 +55,8 @@ async function setupSubscription() {
     return;
   }
 
-  /* ✅ Hide WhatsApp Box After Correct Password */
   document.getElementById("expiredBox").style.display = "none";
 
-  /* ✅ Set Days */
   let days = entered.startsWith("SP") ? 30 : 7;
 
   let expiryDate = new Date();
@@ -79,7 +81,6 @@ function checkExpiry() {
 
   subBtn.innerText = `EXP: ${dd}/${mm}/${yyyy}`;
 
-  /* ✅ Expired */
   if (today > expiryDate) {
     document.getElementById("expiredBox").style.display = "block";
 
@@ -91,10 +92,9 @@ function checkExpiry() {
   }
 }
 
-/* ✅ Run Subscription Check on Page Load */
 window.onload = setupSubscription;
 
-/* ✅ SEND MESSAGE + SHOW 5 YT + 5 IG BUTTONS */
+/* ✅ SEND MESSAGE + STREAMING REPLY */
 async function sendMessage() {
   let input = document.getElementById("userInput");
   let msg = input.value.trim();
@@ -109,8 +109,16 @@ async function sendMessage() {
   /* Bot Placeholder */
   let botDiv = document.createElement("div");
   botDiv.className = "msg bot";
-  botDiv.innerHTML = "🤖 Thinking...";
+
+  /* ✅ Typing Dots */
+  botDiv.innerHTML = `
+    <div class="typing">
+      <span></span><span></span><span></span>
+    </div>
+  `;
+
   chatBox.appendChild(botDiv);
+  chatBox.scrollTop = chatBox.scrollHeight;
 
   try {
     let response = await fetch("/api/chat", {
@@ -126,81 +134,97 @@ async function sendMessage() {
       return;
     }
 
-    let keyword = msg.split(" ")[0];
+    /* ✅ Streaming Reply */
+    setTimeout(() => {
+      let words = data.reply.split(" ");
+      let output = "";
+      let i = 0;
 
-    /* ✅ Reply + Buttons */
-    botDiv.innerHTML = `
-      <p>${data.reply.replace(/\n/g, "<br>")}</p>
+      botDiv.innerHTML = "";
 
-      <div class="link-box">
-        <h4>🎥 YouTube Videos</h4>
+      let interval = setInterval(() => {
+        output += words[i] + " ";
+        botDiv.innerHTML = `<p>${output}</p>`;
 
-        <a target="_blank"
-          href="https://www.youtube.com/results?search_query=${encodeURIComponent(msg)}">
-          ▶ Watch ${keyword} Videos
-        </a>
+        chatBox.scrollTop = chatBox.scrollHeight;
+        i++;
 
-        <a target="_blank"
-          href="https://www.youtube.com/results?search_query=${encodeURIComponent(
-            keyword + " recipe"
-          )}">
-          🍳 ${keyword} Recipe
-        </a>
+        /* ✅ Finished Reply */
+        if (i >= words.length) {
+          clearInterval(interval);
 
-        <a target="_blank"
-          href="https://www.youtube.com/results?search_query=${encodeURIComponent(
-            keyword + " shorts"
-          )}">
-          🎬 ${keyword} Shorts
-        </a>
+          /* ✅ Play Reply Sound */
+          if (replySound) {
+            replySound.currentTime = 0;
+            replySound.play();
+          }
 
-        <a target="_blank"
-          href="https://www.youtube.com/results?search_query=${encodeURIComponent(
-            "hotel style " + keyword
-          )}">
-          🏨 Hotel Style ${keyword}
-        </a>
+          let keyword = msg.split(" ")[0];
 
-        <a target="_blank"
-          href="https://www.youtube.com/results?search_query=${encodeURIComponent(
-            keyword
-          )}">
-          🔍 View All Results
-        </a>
-      </div>
+          /* ✅ Show Buttons */
+          botDiv.innerHTML += `
+            <div class="link-box">
+              <h4>🎥 YouTube Videos</h4>
 
-      <div class="link-box">
-        <h4>📷 Instagram Posts</h4>
+              <a target="_blank"
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(msg)}">
+                ▶ Watch ${keyword} Videos
+              </a>
 
-        <a target="_blank"
-          href="https://www.instagram.com/explore/tags/${keyword}/">
-          #${keyword}
-        </a>
+              <a target="_blank"
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(keyword + " recipe")}">
+                🍳 ${keyword} Recipe
+              </a>
 
-        <a target="_blank"
-          href="https://www.instagram.com/explore/tags/southindianfood/">
-          #southindianfood
-        </a>
+              <a target="_blank"
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(keyword + " shorts")}">
+                🎬 ${keyword} Shorts
+              </a>
 
-        <a target="_blank"
-          href="https://www.instagram.com/explore/tags/breakfastideas/">
-          #breakfastideas
-        </a>
+              <a target="_blank"
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent("hotel style " + keyword)}">
+                🏨 Hotel Style ${keyword}
+              </a>
 
-        <a target="_blank"
-          href="https://www.instagram.com/explore/tags/homemadefood/">
-          #homemadefood
-        </a>
+              <a target="_blank"
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(keyword)}">
+                🔍 View All Results
+              </a>
+            </div>
 
-        <a target="_blank"
-          href="https://www.instagram.com/explore/search/keyword/?q=${keyword}">
-          🔍 View More
-        </a>
-      </div>
-    `;
+            <div class="link-box">
+              <h4>📷 Instagram Posts</h4>
 
-    /* Auto Scroll */
-    chatBox.scrollTop = chatBox.scrollHeight;
+              <a target="_blank"
+                href="https://www.instagram.com/explore/tags/${keyword}/">
+                #${keyword}
+              </a>
+
+              <a target="_blank"
+                href="https://www.instagram.com/explore/tags/southindianfood/">
+                #southindianfood
+              </a>
+
+              <a target="_blank"
+                href="https://www.instagram.com/explore/tags/breakfastideas/">
+                #breakfastideas
+              </a>
+
+              <a target="_blank"
+                href="https://www.instagram.com/explore/tags/homemadefood/">
+                #homemadefood
+              </a>
+
+              <a target="_blank"
+                href="https://www.instagram.com/explore/search/keyword/?q=${keyword}">
+                🔍 View More
+              </a>
+            </div>
+          `;
+        }
+      }, 60);
+    }, 800);
+
   } catch (err) {
     botDiv.innerHTML = "❌ Server Error";
   }
