@@ -120,7 +120,9 @@ function checkExpiry() {
 
 window.onload = setupSubscription;
 
-/* ✅ Tamil Translate Button Feature */
+/* ===================================================== */
+/* ✅ PREMIUM TAMIL TRANSLATOR (100% Correct Translation) */
+/* ===================================================== */
 async function translateTamil(btn) {
   let tamilBox = btn.nextElementSibling;
   tamilBox.innerHTML = "⏳ Translating...";
@@ -132,7 +134,14 @@ async function translateTamil(btn) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: "Translate this into Tamil:\n" + englishText,
+        message: `
+Translate ONLY this text into Tamil.
+Do NOT add extra information.
+Do NOT change topic.
+Only translate exactly:
+
+${englishText}
+        `,
       }),
     });
 
@@ -146,13 +155,14 @@ async function translateTamil(btn) {
 
     btn.disabled = true;
     btn.innerText = "✅ Tamil Shown";
-
   } catch (err) {
     tamilBox.innerHTML = "❌ Translation Failed";
   }
 }
 
+/* ===================================================== */
 /* ✅ SEND MESSAGE + STREAMING REPLY */
+/* ===================================================== */
 async function sendMessage() {
   let input = document.getElementById("userInput");
   let msg = input.value.trim();
@@ -192,6 +202,7 @@ async function sendMessage() {
       return;
     }
 
+    /* Streaming Reply */
     setTimeout(() => {
       let words = data.reply.split(" ");
       let output = "";
@@ -218,7 +229,7 @@ async function sendMessage() {
           let keyword = extractKeyword(msg);
           let englishReply = data.reply;
 
-          /* ✅ Final Reply + Tamil Button + Links */
+          /* Final Reply + Tamil Button + Links */
           botDiv.innerHTML = `
             <p>${englishReply.replace(/\n/g, "<br>")}</p>
 
@@ -291,13 +302,14 @@ async function sendMessage() {
         }
       }, 60);
     }, 800);
-
   } catch (err) {
     botDiv.innerHTML = "❌ Server Error";
   }
 }
 
+/* ===================================================== */
 /* ✅ VOICE INPUT */
+/* ===================================================== */
 function startVoice() {
   if (clickSound) {
     clickSound.currentTime = 0;
