@@ -4,43 +4,95 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Talkies Chatbot</title>
+
+  <!-- Main CSS -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
 
+<!-- ✅ HEADER -->
 <header class="topbar">
+
+  <!-- LEFT TITLE -->
   <div class="logo">
-    <span class="icon">🎁</span>
     <div>
       <h1>iniyan.talkies K'wallet Globe</h1>
       <p>ENGLISH REPLY ONLY</p>
     </div>
   </div>
 
+  <!-- SOCIAL ICON BUTTONS -->
+  <div class="social-buttons">
+    <a class="yt-btn" href="https://youtube.com" target="_blank" title="YouTube">
+      <i class="fab fa-youtube"></i>
+    </a>
+
+    <a class="ig-btn" href="https://instagram.com" target="_blank" title="Instagram">
+      <i class="fab fa-instagram"></i>
+    </a>
+  </div>
+
+  <!-- RIGHT LOGO IMAGE -->
+  <div class="logo-img">
+    <img src="/iniyan.talkies.jpeg" alt="iniyan logo">
+  </div>
+
+  <!-- SUBSCRIPTION EXPIRY -->
   <button id="subBtn" class="sub-btn">EXP: --/--/----</button>
-  <button type="button" class="clear-btn" onclick="clearChat()">Clear Chat</button>
+
+  <!-- CLEAR CHAT -->
+  <button type="button" class="clear-btn" onclick="clearChat()">
+    Clear Chat
+  </button>
+
 </header>
 
+<!-- ✅ CHAT AREA -->
 <main class="chat-area" id="chatBox"></main>
 
+<!-- ✅ INPUT BAR -->
 <footer class="input-bar">
-  <input type="text" id="userInput" placeholder="Type your message..." autocomplete="off"/>
-  <button type="button" class="voice-btn" onclick="startVoice()">🎤</button>
-  <button type="button" class="send-btn" onclick="sendMessage()">➤</button>
+  <input
+    type="text"
+    id="userInput"
+    placeholder="Type your message..."
+    autocomplete="off"
+  />
+
+  <!-- VOICE BUTTON -->
+  <button type="button" class="voice-btn" onclick="startVoice()">
+    🎤
+  </button>
+
+  <!-- SEND BUTTON -->
+  <button type="button" class="send-btn" onclick="sendMessage()">
+    ➤
+  </button>
 </footer>
 
+<!-- ✅ EXPIRED BOX -->
 <div id="expiredBox" class="expired-box">
   <p>❌ Trial/Subscription Finished</p>
+
   <a href="https://wa.me/917200893968?text=Hi,%20I%20need%20subscription%20password%20for%20Kwallet%20Chatbot"
-     target="_blank" class="whatsapp-btn">
+     target="_blank"
+     class="whatsapp-btn">
      📲 Click Here Get New Password
   </a>
 </div>
 
+<!-- Registry Path -->
 <script>
   const REGISTRY_PATH = "./data/registry.json";
 </script>
 
+<!-- Main Script -->
 <script src="./script.js" defer></script>
+
 </body>
 </html>
