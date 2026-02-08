@@ -42,11 +42,8 @@ function extractKeyword(msg) {
   ];
 
   let words = msg.toLowerCase().split(" ");
-
-  // Remove useless words
   let filtered = words.filter((w) => !stopWords.includes(w));
 
-  // Return last meaningful word
   return filtered.length > 0 ? filtered[filtered.length - 1] : msg;
 }
 
@@ -123,6 +120,38 @@ function checkExpiry() {
 
 window.onload = setupSubscription;
 
+/* ✅ Tamil Translate Button Feature */
+async function translateTamil(btn) {
+  let tamilBox = btn.nextElementSibling;
+  tamilBox.innerHTML = "⏳ Translating...";
+
+  let englishText = btn.getAttribute("data-text");
+
+  try {
+    let response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: "Translate this into Tamil:\n" + englishText,
+      }),
+    });
+
+    let data = await response.json();
+
+    tamilBox.innerHTML = `
+      <div class="msg tamil">
+        ${data.reply.replace(/\n/g, "<br>")}
+      </div>
+    `;
+
+    btn.disabled = true;
+    btn.innerText = "✅ Tamil Shown";
+
+  } catch (err) {
+    tamilBox.innerHTML = "❌ Translation Failed";
+  }
+}
+
 /* ✅ SEND MESSAGE + STREAMING REPLY */
 async function sendMessage() {
   let input = document.getElementById("userInput");
@@ -139,7 +168,7 @@ async function sendMessage() {
   let botDiv = document.createElement("div");
   botDiv.className = "msg bot";
 
-  /* ✅ Typing Dots */
+  /* Typing Animation */
   botDiv.innerHTML = `
     <div class="typing">
       <span></span><span></span><span></span>
@@ -163,7 +192,6 @@ async function sendMessage() {
       return;
     }
 
-    /* ✅ Streaming Reply */
     setTimeout(() => {
       let words = data.reply.split(" ");
       let output = "";
@@ -178,21 +206,30 @@ async function sendMessage() {
         chatBox.scrollTop = chatBox.scrollHeight;
         i++;
 
-        /* ✅ Finished Reply */
         if (i >= words.length) {
           clearInterval(interval);
 
-          /* ✅ Play Reply Sound */
+          /* Reply Sound */
           if (replySound) {
             replySound.currentTime = 0;
             replySound.play();
           }
 
-          /* ✅ FIXED Keyword */
           let keyword = extractKeyword(msg);
+          let englishReply = data.reply;
 
-          /* ✅ Show Buttons */
-          botDiv.innerHTML += `
+          /* ✅ Final Reply + Tamil Button + Links */
+          botDiv.innerHTML = `
+            <p>${englishReply.replace(/\n/g, "<br>")}</p>
+
+            <button class="tamil-btn"
+              data-text="${englishReply.replace(/"/g, "&quot;")}"
+              onclick="translateTamil(this)">
+              🌐 Tamil Want? Click Here
+            </button>
+
+            <div class="tamil-output"></div>
+
             <div class="link-box">
               <h4>🎥 YouTube Videos</h4>
 
@@ -217,7 +254,7 @@ async function sendMessage() {
               </a>
 
               <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(keyword)}">
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(msg)}">
                 🔍 View All Results
               </a>
             </div>
@@ -260,7 +297,7 @@ async function sendMessage() {
   }
 }
 
-/* ✅ VOICE INPUT + CLICK SOUND */
+/* ✅ VOICE INPUT */
 function startVoice() {
   if (clickSound) {
     clickSound.currentTime = 0;
