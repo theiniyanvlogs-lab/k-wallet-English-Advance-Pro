@@ -1,10 +1,10 @@
 let expiryKey = "chatbot_expiry";
 
-/* ✅ CLICK SOUND UNLOCK */
+/* ✅ CLICK + REPLY SOUND */
 let clickSound;
 let replySound;
 
-/* ✅ Unlock Sounds After First Click */
+/* ✅ Unlock Sounds After First Click (Chrome Policy Fix) */
 window.addEventListener(
   "click",
   () => {
@@ -21,34 +21,25 @@ window.addEventListener(
   { once: true }
 );
 
-/* ✅ SMART KEYWORD EXTRACTOR */
+/* ===================================================== */
+/* ✅ ULTRA KEYWORD EXTRACTOR (2026 PERFECT FIX) */
+/* ===================================================== */
 function extractKeyword(msg) {
   let stopWords = [
-    "how",
-    "to",
-    "prepare",
-    "make",
-    "cook",
-    "recipe",
-    "is",
-    "are",
-    "the",
-    "a",
-    "an",
-    "please",
-    "tell",
-    "me",
-    "about",
+    "how","to","prepare","make","cook","recipe",
+    "is","are","the","a","an","please","tell",
+    "me","about","where","they","living","live"
   ];
 
-  let words = msg.toLowerCase().split(" ");
+  let cleaned = msg.toLowerCase().replace(/[^\w\s]/g, "");
+  let words = cleaned.split(" ");
   let filtered = words.filter((w) => !stopWords.includes(w));
 
-  return filtered.length > 0 ? filtered[filtered.length - 1] : msg;
+  return filtered.length > 0 ? filtered[0] : msg;
 }
 
 /* ===================================================== */
-/* ✅ SMART CATEGORY DETECTOR (2026 PREMIUM FIX) */
+/* ✅ SMART CATEGORY DETECTOR (2026 PREMIUM MODE) */
 /* ===================================================== */
 function detectCategory(msg) {
   msg = msg.toLowerCase();
@@ -58,9 +49,7 @@ function detectCategory(msg) {
     msg.includes("prepare") ||
     msg.includes("cook") ||
     msg.includes("how to make")
-  ) {
-    return "food";
-  }
+  ) return "food";
 
   if (
     msg.includes("state") ||
@@ -68,30 +57,30 @@ function detectCategory(msg) {
     msg.includes("district") ||
     msg.includes("tourism") ||
     msg.includes("where is")
-  ) {
-    return "place";
-  }
+  ) return "place";
 
   if (
     msg.includes("who is") ||
     msg.includes("biography") ||
     msg.includes("actor") ||
     msg.includes("leader")
-  ) {
-    return "person";
-  }
+  ) return "person";
 
   return "general";
 }
 
-/* ✅ Load Passwords */
+/* ===================================================== */
+/* ✅ LOAD PASSWORDS */
+/* ===================================================== */
 async function loadPasswords() {
   let res = await fetch(REGISTRY_PATH);
   let data = await res.json();
   return data.validPasswords;
 }
 
-/* ✅ Subscription Setup */
+/* ===================================================== */
+/* ✅ SUBSCRIPTION SETUP */
+/* ===================================================== */
 async function setupSubscription() {
   let storedExpiry = localStorage.getItem(expiryKey);
 
@@ -132,7 +121,9 @@ async function setupSubscription() {
   checkExpiry();
 }
 
-/* ✅ Check Expiry */
+/* ===================================================== */
+/* ✅ CHECK EXPIRY */
+/* ===================================================== */
 function checkExpiry() {
   let expiryDate = new Date(localStorage.getItem(expiryKey));
   let today = new Date();
@@ -146,11 +137,9 @@ function checkExpiry() {
 
   if (today > expiryDate) {
     document.getElementById("expiredBox").style.display = "block";
-
     document.querySelector(".send-btn").disabled = true;
     document.querySelector(".voice-btn").disabled = true;
     document.getElementById("userInput").disabled = true;
-
     localStorage.removeItem(expiryKey);
   }
 }
@@ -158,7 +147,7 @@ function checkExpiry() {
 window.onload = setupSubscription;
 
 /* ===================================================== */
-/* ✅ PREMIUM TAMIL TRANSLATOR */
+/* ✅ PREMIUM TAMIL TRANSLATOR (NO SKIP NAMES) */
 /* ===================================================== */
 async function translateTamil(btn) {
   let tamilBox = btn.nextElementSibling;
@@ -175,8 +164,9 @@ async function translateTamil(btn) {
           "Translate the following English text into Tamil EXACTLY.\n\n" +
           "Rules:\n" +
           "- Do not skip any words\n" +
-          "- Keep all names unchanged\n" +
-          "- Do not summarize\n\n" +
+          "- Keep names like Tamil, Telugu, Hindi, Malayalam unchanged\n" +
+          "- Do not summarize\n" +
+          "- Only translate exactly\n\n" +
           "Text:\n" +
           englishText,
       }),
@@ -198,13 +188,14 @@ async function translateTamil(btn) {
 }
 
 /* ===================================================== */
-/* ✅ SEND MESSAGE */
+/* ✅ SEND MESSAGE + ULTRA PREMIUM SMART LINKS */
 /* ===================================================== */
 async function sendMessage() {
   let input = document.getElementById("userInput");
   let msg = input.value.trim();
   if (msg === "") return;
 
+  /* ✅ Send Button Click Sound */
   if (clickSound) {
     clickSound.currentTime = 0;
     clickSound.play();
@@ -218,6 +209,7 @@ async function sendMessage() {
   let botDiv = document.createElement("div");
   botDiv.className = "msg bot";
 
+  /* Typing Animation */
   botDiv.innerHTML = `
     <div class="typing">
       <span></span><span></span><span></span>
@@ -240,119 +232,115 @@ async function sendMessage() {
       return;
     }
 
-    setTimeout(() => {
-      let words = data.reply.split(" ");
-      let output = "";
-      let i = 0;
+    let englishReply = data.reply;
+    let keyword = extractKeyword(msg);
+    let category = detectCategory(msg);
 
-      botDiv.innerHTML = "";
+    /* ✅ SMART YOUTUBE QUERIES */
+    let q1, q2, q3, q4, q5;
 
-      let interval = setInterval(() => {
-        output += words[i] + " ";
-        botDiv.innerHTML = `<p>${output}</p>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-        i++;
+    if (category === "food") {
+      q1 = msg + " recipe";
+      q2 = msg + " step by step";
+      q3 = msg + " hotel style";
+      q4 = msg + " tips";
+      q5 = msg + " cooking video";
+    } else if (category === "place") {
+      q1 = msg + " tourism";
+      q2 = msg + " famous places";
+      q3 = msg + " travel guide";
+      q4 = msg + " culture";
+      q5 = msg + " map";
+    } else if (category === "person") {
+      q1 = msg + " biography";
+      q2 = msg + " interview";
+      q3 = msg + " achievements";
+      q4 = msg + " life story";
+      q5 = msg + " latest news";
+    } else {
+      q1 = msg + " explained";
+      q2 = msg + " tutorial";
+      q3 = msg + " examples";
+      q4 = msg + " details";
+      q5 = msg + " information";
+    }
 
-        if (i >= words.length) {
-          clearInterval(interval);
+    /* ✅ SMART INSTAGRAM TAGS */
+    let ig1, ig2, ig3, ig4, ig5;
 
-          if (replySound) {
-            replySound.currentTime = 0;
-            replySound.play();
-          }
+    if (category === "food") {
+      ig1 = keyword;
+      ig2 = keyword + "recipe";
+      ig3 = keyword + "food";
+      ig4 = keyword + "cooking";
+      ig5 = keyword + "homemade";
+    } else if (category === "place") {
+      ig1 = keyword;
+      ig2 = keyword + "tourism";
+      ig3 = keyword + "travel";
+      ig4 = keyword + "culture";
+      ig5 = keyword + "explore";
+    } else if (category === "person") {
+      ig1 = keyword;
+      ig2 = keyword + "biography";
+      ig3 = keyword + "life";
+      ig4 = keyword + "legend";
+      ig5 = keyword + "inspiration";
+    } else {
+      ig1 = keyword;
+      ig2 = keyword + "facts";
+      ig3 = keyword + "info";
+      ig4 = keyword + "knowledge";
+      ig5 = keyword + "trending";
+    }
 
-          let keyword = extractKeyword(msg);
-          let englishReply = data.reply;
+    /* ✅ Final Output */
+    botDiv.innerHTML = `
+      <p>${englishReply.replace(/\n/g, "<br>")}</p>
 
-          /* ✅ SMART LINK MODE */
-          let category = detectCategory(msg);
+      <button class="tamil-btn"
+        data-text="${englishReply.replace(/"/g, "&quot;")}"
+        onclick="translateTamil(this)">
+        🌐 Tamil Want? Click Here
+      </button>
 
-          let q1, q2, q3, q4, q5;
+      <div class="tamil-output"></div>
 
-          if (category === "food") {
-            q1 = msg + " recipe";
-            q2 = msg + " step by step";
-            q3 = msg + " hotel style";
-            q4 = msg + " tips";
-            q5 = msg + " video";
-          } else if (category === "place") {
-            q1 = msg + " tourism";
-            q2 = msg + " famous places";
-            q3 = msg + " map";
-            q4 = msg + " culture";
-            q5 = msg + " travel guide";
-          } else if (category === "person") {
-            q1 = msg + " biography";
-            q2 = msg + " interview";
-            q3 = msg + " achievements";
-            q4 = msg + " life story";
-            q5 = msg + " latest news";
-          } else {
-            q1 = msg + " explained";
-            q2 = msg + " tutorial";
-            q3 = msg + " examples";
-            q4 = msg + " details";
-            q5 = msg + " information";
-          }
+      <div class="link-box">
+        <h4>🎥 YouTube Links</h4>
+        <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q1)}">▶ ${q1}</a>
+        <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q2)}">📌 ${q2}</a>
+        <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q3)}">⭐ ${q3}</a>
+        <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q4)}">🔥 ${q4}</a>
+        <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q5)}">🎬 ${q5}</a>
+      </div>
 
-          botDiv.innerHTML = `
-            <p>${englishReply.replace(/\n/g, "<br>")}</p>
+      <div class="link-box">
+        <h4>📷 Instagram Tags</h4>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig1}/">#${ig1}</a>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig2}/">#${ig2}</a>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig3}/">#${ig3}</a>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig4}/">#${ig4}</a>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig5}/">#${ig5}</a>
+      </div>
+    `;
 
-            <button class="tamil-btn"
-              data-text="${englishReply.replace(/"/g, "&quot;")}"
-              onclick="translateTamil(this)">
-              🌐 Tamil Want? Click Here
-            </button>
+    /* ✅ Reply Sound */
+    if (replySound) {
+      replySound.currentTime = 0;
+      replySound.play();
+    }
 
-            <div class="tamil-output"></div>
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-            <div class="link-box">
-              <h4>🎥 YouTube Links</h4>
-
-              <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q1)}">▶ ${q1}</a>
-
-              <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q2)}">📌 ${q2}</a>
-
-              <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q3)}">⭐ ${q3}</a>
-
-              <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q4)}">🔥 ${q4}</a>
-
-              <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q5)}">🎬 ${q5}</a>
-            </div>
-
-            <div class="link-box">
-              <h4>📷 Instagram Tags</h4>
-
-              <a target="_blank"
-                href="https://www.instagram.com/explore/tags/${keyword}/">#${keyword}</a>
-
-              <a target="_blank"
-                href="https://www.instagram.com/explore/tags/${keyword}recipe/">#${keyword}recipe</a>
-
-              <a target="_blank"
-                href="https://www.instagram.com/explore/tags/${keyword}reels/">#${keyword}reels</a>
-
-              <a target="_blank"
-                href="https://www.instagram.com/explore/tags/${keyword}trending/">#${keyword}trending</a>
-
-              <a target="_blank"
-                href="https://www.instagram.com/explore/tags/${keyword}explore/">#${keyword}explore</a>
-            </div>
-          `;
-        }
-      }, 60);
-    }, 800);
   } catch (err) {
     botDiv.innerHTML = "❌ Server Error";
   }
 }
 
-/* ✅ VOICE INPUT */
+/* ===================================================== */
+/* ✅ VOICE INPUT + MIC SOUND */
+/* ===================================================== */
 function startVoice() {
   if (clickSound) {
     clickSound.currentTime = 0;
@@ -374,7 +362,9 @@ function startVoice() {
   };
 }
 
+/* ===================================================== */
 /* ✅ CLEAR CHAT */
+/* ===================================================== */
 function clearChat() {
   document.getElementById("chatBox").innerHTML = "";
 }
