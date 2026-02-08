@@ -21,6 +21,35 @@ window.addEventListener(
   { once: true }
 );
 
+/* ✅ SMART KEYWORD EXTRACTOR (2026 FIX) */
+function extractKeyword(msg) {
+  let stopWords = [
+    "how",
+    "to",
+    "prepare",
+    "make",
+    "cook",
+    "recipe",
+    "is",
+    "are",
+    "the",
+    "a",
+    "an",
+    "please",
+    "tell",
+    "me",
+    "about",
+  ];
+
+  let words = msg.toLowerCase().split(" ");
+
+  // Remove useless words
+  let filtered = words.filter((w) => !stopWords.includes(w));
+
+  // Return last meaningful word
+  return filtered.length > 0 ? filtered[filtered.length - 1] : msg;
+}
+
 /* ✅ Load Passwords */
 async function loadPasswords() {
   let res = await fetch(REGISTRY_PATH);
@@ -159,7 +188,8 @@ async function sendMessage() {
             replySound.play();
           }
 
-          let keyword = msg.split(" ")[0];
+          /* ✅ FIXED Keyword */
+          let keyword = extractKeyword(msg);
 
           /* ✅ Show Buttons */
           botDiv.innerHTML += `
