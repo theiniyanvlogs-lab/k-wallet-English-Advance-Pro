@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Talkies Chatbot</title>
 
-  <!-- Main CSS -->
-  <link rel="stylesheet" href="style.css">
+  <!-- ✅ Main CSS -->
+  <link rel="stylesheet" href="./style.css">
 
-  <!-- Font Awesome Icons -->
+  <!-- ✅ Font Awesome Icons (Stable Version) -->
   <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 
 <body>
@@ -26,7 +26,7 @@
     </div>
   </div>
 
-  <!-- SOCIAL ICON BUTTONS -->
+  <!-- ✅ SOCIAL ICON BUTTONS -->
   <div class="social-buttons">
     <a class="yt-btn" href="https://youtube.com" target="_blank" title="YouTube">
       <i class="fab fa-youtube"></i>
@@ -37,15 +37,15 @@
     </a>
   </div>
 
-  <!-- RIGHT LOGO IMAGE -->
+  <!-- ✅ RIGHT LOGO IMAGE -->
   <div class="logo-img">
-    <img src="/iniyan.talkies.jpeg" alt="iniyan logo">
+    <img src="./iniyan.talkies.jpeg" alt="iniyan logo">
   </div>
 
-  <!-- SUBSCRIPTION EXPIRY -->
+  <!-- ✅ SUBSCRIPTION EXPIRY -->
   <button id="subBtn" class="sub-btn">EXP: --/--/----</button>
 
-  <!-- CLEAR CHAT -->
+  <!-- ✅ CLEAR CHAT -->
   <button type="button" class="clear-btn" onclick="clearChat()">
     Clear Chat
   </button>
@@ -57,6 +57,7 @@
 
 <!-- ✅ INPUT BAR -->
 <footer class="input-bar">
+
   <input
     type="text"
     id="userInput"
@@ -64,21 +65,21 @@
     autocomplete="off"
   />
 
-  <!-- VOICE BUTTON -->
+  <!-- ✅ VOICE BUTTON -->
   <button type="button" class="voice-btn" onclick="startVoice()">
     🎤
   </button>
 
-  <!-- SEND BUTTON -->
+  <!-- ✅ SEND BUTTON -->
   <button type="button" class="send-btn" onclick="sendMessage()">
     ➤
   </button>
+
 </footer>
 
 <!-- ✅ EXPIRED / TRIAL BOX -->
 <div id="expiredBox" class="expired-box">
 
-  <!-- Added Trial Password Line -->
   <p>🔑 Get Trial Password (7 Days)</p>
 
   <p>❌ Trial/Subscription Finished</p>
@@ -91,12 +92,12 @@
 
 </div>
 
-<!-- Registry Path -->
+<!-- ✅ Registry Path -->
 <script>
   const REGISTRY_PATH = "./data/registry.json";
 </script>
 
-<!-- Main Script -->
+<!-- ✅ Main Script -->
 <script src="./script.js" defer></script>
 
 </body>
