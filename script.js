@@ -64,7 +64,7 @@ async function sendMessage(){
   try{
     let response=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:msg})});
     let data=await response.json();
-    botDiv.innerHTML=`<p>${data.reply}</p>`;
+    botDiv.innerHTML = data.reply.replace(/\n/g,"<br>");
   }catch(err){
     botDiv.innerHTML="❌ Server Error";
   }
