@@ -21,7 +21,7 @@ window.addEventListener(
   { once: true }
 );
 
-/* ✅ SMART KEYWORD EXTRACTOR (2026 FIX) */
+/* ✅ SMART KEYWORD EXTRACTOR */
 function extractKeyword(msg) {
   let stopWords = [
     "how",
@@ -45,6 +45,43 @@ function extractKeyword(msg) {
   let filtered = words.filter((w) => !stopWords.includes(w));
 
   return filtered.length > 0 ? filtered[filtered.length - 1] : msg;
+}
+
+/* ===================================================== */
+/* ✅ SMART CATEGORY DETECTOR (2026 PREMIUM FIX) */
+/* ===================================================== */
+function detectCategory(msg) {
+  msg = msg.toLowerCase();
+
+  if (
+    msg.includes("recipe") ||
+    msg.includes("prepare") ||
+    msg.includes("cook") ||
+    msg.includes("how to make")
+  ) {
+    return "food";
+  }
+
+  if (
+    msg.includes("state") ||
+    msg.includes("capital") ||
+    msg.includes("district") ||
+    msg.includes("tourism") ||
+    msg.includes("where is")
+  ) {
+    return "place";
+  }
+
+  if (
+    msg.includes("who is") ||
+    msg.includes("biography") ||
+    msg.includes("actor") ||
+    msg.includes("leader")
+  ) {
+    return "person";
+  }
+
+  return "general";
 }
 
 /* ✅ Load Passwords */
@@ -121,7 +158,7 @@ function checkExpiry() {
 window.onload = setupSubscription;
 
 /* ===================================================== */
-/* ✅ PREMIUM TAMIL TRANSLATOR (100% Correct Translation) */
+/* ✅ PREMIUM TAMIL TRANSLATOR */
 /* ===================================================== */
 async function translateTamil(btn) {
   let tamilBox = btn.nextElementSibling;
@@ -134,14 +171,14 @@ async function translateTamil(btn) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: `
-Translate ONLY this text into Tamil.
-Do NOT add extra information.
-Do NOT change topic.
-Only translate exactly:
-
-${englishText}
-        `,
+        message:
+          "Translate the following English text into Tamil EXACTLY.\n\n" +
+          "Rules:\n" +
+          "- Do not skip any words\n" +
+          "- Keep all names unchanged\n" +
+          "- Do not summarize\n\n" +
+          "Text:\n" +
+          englishText,
       }),
     });
 
@@ -161,24 +198,26 @@ ${englishText}
 }
 
 /* ===================================================== */
-/* ✅ SEND MESSAGE + STREAMING REPLY */
+/* ✅ SEND MESSAGE */
 /* ===================================================== */
 async function sendMessage() {
   let input = document.getElementById("userInput");
   let msg = input.value.trim();
   if (msg === "") return;
 
+  if (clickSound) {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  }
+
   let chatBox = document.getElementById("chatBox");
 
-  /* User Message */
   chatBox.innerHTML += `<div class="msg user">${msg}</div>`;
   input.value = "";
 
-  /* Bot Placeholder */
   let botDiv = document.createElement("div");
   botDiv.className = "msg bot";
 
-  /* Typing Animation */
   botDiv.innerHTML = `
     <div class="typing">
       <span></span><span></span><span></span>
@@ -196,13 +235,11 @@ async function sendMessage() {
     });
 
     let data = await response.json();
-
     if (data.error) {
       botDiv.innerHTML = "❌ " + data.error;
       return;
     }
 
-    /* Streaming Reply */
     setTimeout(() => {
       let words = data.reply.split(" ");
       let output = "";
@@ -213,14 +250,12 @@ async function sendMessage() {
       let interval = setInterval(() => {
         output += words[i] + " ";
         botDiv.innerHTML = `<p>${output}</p>`;
-
         chatBox.scrollTop = chatBox.scrollHeight;
         i++;
 
         if (i >= words.length) {
           clearInterval(interval);
 
-          /* Reply Sound */
           if (replySound) {
             replySound.currentTime = 0;
             replySound.play();
@@ -229,7 +264,37 @@ async function sendMessage() {
           let keyword = extractKeyword(msg);
           let englishReply = data.reply;
 
-          /* Final Reply + Tamil Button + Links */
+          /* ✅ SMART LINK MODE */
+          let category = detectCategory(msg);
+
+          let q1, q2, q3, q4, q5;
+
+          if (category === "food") {
+            q1 = msg + " recipe";
+            q2 = msg + " step by step";
+            q3 = msg + " hotel style";
+            q4 = msg + " tips";
+            q5 = msg + " video";
+          } else if (category === "place") {
+            q1 = msg + " tourism";
+            q2 = msg + " famous places";
+            q3 = msg + " map";
+            q4 = msg + " culture";
+            q5 = msg + " travel guide";
+          } else if (category === "person") {
+            q1 = msg + " biography";
+            q2 = msg + " interview";
+            q3 = msg + " achievements";
+            q4 = msg + " life story";
+            q5 = msg + " latest news";
+          } else {
+            q1 = msg + " explained";
+            q2 = msg + " tutorial";
+            q3 = msg + " examples";
+            q4 = msg + " details";
+            q5 = msg + " information";
+          }
+
           botDiv.innerHTML = `
             <p>${englishReply.replace(/\n/g, "<br>")}</p>
 
@@ -242,61 +307,41 @@ async function sendMessage() {
             <div class="tamil-output"></div>
 
             <div class="link-box">
-              <h4>🎥 YouTube Videos</h4>
+              <h4>🎥 YouTube Links</h4>
 
               <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(msg)}">
-                ▶ Watch ${keyword} Videos
-              </a>
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q1)}">▶ ${q1}</a>
 
               <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(keyword + " recipe")}">
-                🍳 ${keyword} Recipe
-              </a>
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q2)}">📌 ${q2}</a>
 
               <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(keyword + " shorts")}">
-                🎬 ${keyword} Shorts
-              </a>
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q3)}">⭐ ${q3}</a>
 
               <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent("hotel style " + keyword)}">
-                🏨 Hotel Style ${keyword}
-              </a>
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q4)}">🔥 ${q4}</a>
 
               <a target="_blank"
-                href="https://www.youtube.com/results?search_query=${encodeURIComponent(msg)}">
-                🔍 View All Results
-              </a>
+                href="https://www.youtube.com/results?search_query=${encodeURIComponent(q5)}">🎬 ${q5}</a>
             </div>
 
             <div class="link-box">
-              <h4>📷 Instagram Posts</h4>
+              <h4>📷 Instagram Tags</h4>
 
               <a target="_blank"
-                href="https://www.instagram.com/explore/tags/${keyword}/">
-                #${keyword}
-              </a>
+                href="https://www.instagram.com/explore/tags/${keyword}/">#${keyword}</a>
 
               <a target="_blank"
-                href="https://www.instagram.com/explore/tags/southindianfood/">
-                #southindianfood
-              </a>
+                href="https://www.instagram.com/explore/tags/${keyword}recipe/">#${keyword}recipe</a>
 
               <a target="_blank"
-                href="https://www.instagram.com/explore/tags/breakfastideas/">
-                #breakfastideas
-              </a>
+                href="https://www.instagram.com/explore/tags/${keyword}reels/">#${keyword}reels</a>
 
               <a target="_blank"
-                href="https://www.instagram.com/explore/tags/homemadefood/">
-                #homemadefood
-              </a>
+                href="https://www.instagram.com/explore/tags/${keyword}trending/">#${keyword}trending</a>
 
               <a target="_blank"
-                href="https://www.instagram.com/explore/search/keyword/?q=${keyword}">
-                🔍 View More
-              </a>
+                href="https://www.instagram.com/explore/tags/${keyword}explore/">#${keyword}explore</a>
             </div>
           `;
         }
@@ -307,9 +352,7 @@ async function sendMessage() {
   }
 }
 
-/* ===================================================== */
 /* ✅ VOICE INPUT */
-/* ===================================================== */
 function startVoice() {
   if (clickSound) {
     clickSound.currentTime = 0;
