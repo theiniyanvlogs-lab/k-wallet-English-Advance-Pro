@@ -177,6 +177,54 @@ body {
   background: crimson;
 }
 
+/* ===================================================== */
+/* ✅ NEW FEATURE: 🌐 Tamil Want Button + Output Styling */
+/* ===================================================== */
+
+/* Tamil Translate Button */
+.tamil-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+
+  background: linear-gradient(90deg, #ff9800, #ff5722);
+  transition: 0.3s;
+}
+
+.tamil-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+.tamil-btn:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+/* Tamil Output Box */
+.tamil-output {
+  margin-top: 12px;
+}
+
+.msg.tamil {
+  background: #111;
+  border-left: 5px solid orange;
+  padding: 14px;
+  margin-top: 10px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ===================================================== */
+
 /* ✅ INPUT BAR */
 .input-bar {
   display: flex;
@@ -294,5 +342,9 @@ body {
 
   .chat-area {
     height: 65vh;
+  }
+
+  .tamil-btn {
+    font-size: 14px;
   }
 }
