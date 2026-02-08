@@ -8,7 +8,7 @@
   <!-- ✅ Main CSS -->
   <link rel="stylesheet" href="./style.css">
 
-  <!-- ✅ Font Awesome Icons (Stable Version) -->
+  <!-- ✅ Font Awesome Icons -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -65,10 +65,17 @@
     autocomplete="off"
   />
 
-  <!-- ✅ VOICE BUTTON -->
-  <button type="button" class="voice-btn" onclick="startVoice()">
-    🎤
-  </button>
+  <!-- ✅ VOICE BUTTON + Listening Text -->
+  <div class="voice-wrap">
+
+    <button type="button" class="voice-btn" onclick="startVoice()">
+      🎤
+    </button>
+
+    <!-- ✅ Listening Text (Hidden until mic active) -->
+    <span class="listening-text">Listening...</span>
+
+  </div>
 
   <!-- ✅ SEND BUTTON -->
   <button type="button" class="send-btn" onclick="sendMessage()">
