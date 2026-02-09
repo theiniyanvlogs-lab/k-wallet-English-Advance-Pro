@@ -12,7 +12,7 @@ body {
 }
 
 /* ===================================================== */
-/* ✅ HEADER TOPBAR (Single Line Layout) */
+/* ✅ HEADER TOPBAR (Single Line Layout + Sticky) */
 /* ===================================================== */
 
 .topbar {
@@ -28,6 +28,11 @@ body {
   flex-wrap: nowrap;
   overflow-x: auto;
   white-space: nowrap;
+
+  /* ✅ Sticky Header */
+  position: sticky;
+  top: 0;
+  z-index: 999;
 }
 
 /* ✅ Title */
