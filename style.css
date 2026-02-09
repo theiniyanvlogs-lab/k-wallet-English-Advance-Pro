@@ -35,6 +35,11 @@ body {
   z-index: 999;
 }
 
+/* ✅ Hide Header Scrollbar (Premium Look) */
+.topbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* ✅ Title */
 .app-title {
   font-size: 18px;
@@ -219,18 +224,19 @@ body {
   cursor: not-allowed;
 }
 
-.tamil-output {
-  margin-top: 12px;
-}
+/* ===================================================== */
+/* ✅ Tamil Translation Output (Improved Premium Style) */
+/* ===================================================== */
 
 .msg.tamil {
-  background: #111;
-  border-left: 5px solid orange;
-  padding: 14px;
   margin-top: 10px;
+  background: #1c1200;
+  border-left: 5px solid gold;
+  padding: 14px;
   border-radius: 12px;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #ffe9c6;
 }
 
 /* ===================================================== */
@@ -239,6 +245,7 @@ body {
 
 .input-bar {
   display: flex;
+  align-items: center;
   gap: 10px;
   padding: 15px;
   background: #111;
@@ -277,7 +284,7 @@ body {
 }
 
 /* ===================================================== */
-/* 🎤 PREMIUM MIC ANIMATION + Listening Text */
+/* 🎤 MIC ANIMATION + Listening Text */
 /* ===================================================== */
 
 .voice-wrap {
