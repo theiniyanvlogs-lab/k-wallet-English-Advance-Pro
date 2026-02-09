@@ -4,7 +4,7 @@ let expiryKey = "chatbot_expiry";
 let clickSound;
 let replySound;
 
-/* ✅ Unlock Sounds After First Click (Chrome Policy Fix) */
+/* ✅ Unlock Sounds After First Click */
 window.addEventListener(
   "click",
   () => {
@@ -22,7 +22,7 @@ window.addEventListener(
 );
 
 /* ===================================================== */
-/* ✅ SAFE HTML ESCAPE (Fix Broken Quotes) */
+/* ✅ SAFE HTML ESCAPE */
 /* ===================================================== */
 function escapeHTML(text) {
   return text
@@ -33,7 +33,7 @@ function escapeHTML(text) {
 }
 
 /* ===================================================== */
-/* ✅ ULTRA KEYWORD EXTRACTOR */
+/* ✅ KEYWORD EXTRACTOR */
 /* ===================================================== */
 function extractKeyword(msg) {
   let stopWords = [
@@ -50,7 +50,7 @@ function extractKeyword(msg) {
 }
 
 /* ===================================================== */
-/* ✅ SMART CATEGORY DETECTOR */
+/* ✅ CATEGORY DETECTOR */
 /* ===================================================== */
 function detectCategory(msg) {
   msg = msg.toLowerCase();
@@ -136,15 +136,16 @@ function checkExpiry() {
 window.onload = setupSubscription;
 
 /* ===================================================== */
-/* ✅ PREMIUM TAMIL TRANSLATOR (2026 FIXED OUTPUT) */
+/* ✅ PREMIUM TAMIL TRANSLATOR */
 /* ===================================================== */
 async function translateTamil(btn) {
 
   let msgBox = btn.closest(".msg.bot");
   let tamilBox = msgBox.querySelector(".tamil-output");
 
-  tamilBox.innerHTML = "⏳ Translating...";
+  if (tamilBox.innerHTML.trim() !== "") return;
 
+  tamilBox.innerHTML = "⏳ Translating...";
   let englishText = btn.getAttribute("data-text");
 
   btn.disabled = true;
@@ -155,12 +156,11 @@ async function translateTamil(btn) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message:
-          "Translate the following English text into NATURAL Tamil.\n\n" +
+          "Translate this English into clean Natural Tamil.\n\n" +
           "Rules:\n" +
-          "- Do not change names (Coffee, Tamil, Hindi)\n" +
-          "- Keep meaning accurate\n" +
-          "- Write clean spoken Tamil\n" +
-          "- No weird words\n\n" +
+          "- Keep names unchanged\n" +
+          "- No weird machine words\n" +
+          "- Accurate meaning\n\n" +
           englishText,
       }),
     });
@@ -223,12 +223,64 @@ async function sendMessage() {
     let keyword = extractKeyword(msg);
     let category = detectCategory(msg);
 
-    /* Smart Queries */
-    let q1 = msg + " explained";
-    let q2 = msg + " tutorial";
-    let q3 = msg + " details";
+    /* ✅ CATEGORY BASED YOUTUBE + INSTAGRAM */
+    let q1, q2, q3, q4, q5;
+    let ig1, ig2, ig3, ig4, ig5;
 
-    /* Final Bot Output */
+    if (category === "food") {
+      q1 = msg + " recipe";
+      q2 = msg + " cooking step by step";
+      q3 = msg + " hotel style";
+      q4 = msg + " tasty tips";
+      q5 = msg + " cooking video";
+
+      ig1 = keyword;
+      ig2 = keyword + "recipe";
+      ig3 = keyword + "food";
+      ig4 = keyword + "cooking";
+      ig5 = keyword + "homemade";
+
+    } else if (category === "place") {
+      q1 = msg + " tourism";
+      q2 = msg + " travel guide";
+      q3 = msg + " famous places";
+      q4 = msg + " culture";
+      q5 = msg + " map vlog";
+
+      ig1 = keyword;
+      ig2 = keyword + "travel";
+      ig3 = keyword + "tourism";
+      ig4 = keyword + "explore";
+      ig5 = keyword + "vlog";
+
+    } else if (category === "person") {
+      q1 = msg + " biography";
+      q2 = msg + " interview";
+      q3 = msg + " achievements";
+      q4 = msg + " life story";
+      q5 = msg + " latest news";
+
+      ig1 = keyword;
+      ig2 = keyword + "biography";
+      ig3 = keyword + "legend";
+      ig4 = keyword + "inspiration";
+      ig5 = keyword + "fanpage";
+
+    } else {
+      q1 = msg + " explained";
+      q2 = msg + " tutorial";
+      q3 = msg + " facts";
+      q4 = msg + " examples";
+      q5 = msg + " trending";
+
+      ig1 = keyword;
+      ig2 = keyword + "facts";
+      ig3 = keyword + "info";
+      ig4 = keyword + "knowledge";
+      ig5 = keyword + "trending";
+    }
+
+    /* ✅ FINAL BOT OUTPUT */
     botDiv.innerHTML = `
       <div class="text">${englishReply.replace(/\n/g, "<br>")}</div>
 
@@ -241,10 +293,21 @@ async function sendMessage() {
       <div class="tamil-output"></div>
 
       <div class="link-box">
-        <h4>🎥 YouTube Search</h4>
+        <h4>🎥 YouTube Suggestions</h4>
         <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q1)}">▶ ${q1}</a>
         <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q2)}">📌 ${q2}</a>
         <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q3)}">⭐ ${q3}</a>
+        <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q4)}">🔥 ${q4}</a>
+        <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q5)}">🎬 ${q5}</a>
+      </div>
+
+      <div class="link-box">
+        <h4>📷 Instagram Trending Tags</h4>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig1}/">#${ig1}</a>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig2}/">#${ig2}</a>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig3}/">#${ig3}</a>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig4}/">#${ig4}</a>
+        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig5}/">#${ig5}</a>
       </div>
     `;
 
