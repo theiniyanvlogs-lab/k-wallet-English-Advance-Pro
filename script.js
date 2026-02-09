@@ -22,7 +22,18 @@ window.addEventListener(
 );
 
 /* ===================================================== */
-/* ✅ ULTRA KEYWORD EXTRACTOR (2026 PERFECT FIX) */
+/* ✅ SAFE HTML ESCAPE (Fix Broken Quotes) */
+/* ===================================================== */
+function escapeHTML(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/* ===================================================== */
+/* ✅ ULTRA KEYWORD EXTRACTOR */
 /* ===================================================== */
 function extractKeyword(msg) {
   let stopWords = [
@@ -39,32 +50,14 @@ function extractKeyword(msg) {
 }
 
 /* ===================================================== */
-/* ✅ SMART CATEGORY DETECTOR (2026 PREMIUM MODE) */
+/* ✅ SMART CATEGORY DETECTOR */
 /* ===================================================== */
 function detectCategory(msg) {
   msg = msg.toLowerCase();
 
-  if (
-    msg.includes("recipe") ||
-    msg.includes("prepare") ||
-    msg.includes("cook") ||
-    msg.includes("how to make")
-  ) return "food";
-
-  if (
-    msg.includes("state") ||
-    msg.includes("capital") ||
-    msg.includes("district") ||
-    msg.includes("tourism") ||
-    msg.includes("where is")
-  ) return "place";
-
-  if (
-    msg.includes("who is") ||
-    msg.includes("biography") ||
-    msg.includes("actor") ||
-    msg.includes("leader")
-  ) return "person";
+  if (msg.includes("recipe") || msg.includes("cook")) return "food";
+  if (msg.includes("capital") || msg.includes("tourism")) return "place";
+  if (msg.includes("who is") || msg.includes("actor")) return "person";
 
   return "general";
 }
@@ -95,15 +88,12 @@ async function setupSubscription() {
     "🔑 Enter TP Trial Password (7 Days) or SP Subscription Password (30 Days):"
   );
 
-  if (!entered) {
-    alert("Password Required! Please get password from WhatsApp.");
-    return;
-  }
+  if (!entered) return alert("Password Required!");
 
   let valid = await loadPasswords();
 
   if (!valid.includes(entered)) {
-    alert("❌ Invalid Password. Please request correct password in WhatsApp.");
+    alert("❌ Invalid Password.");
     return;
   }
 
@@ -117,7 +107,6 @@ async function setupSubscription() {
   localStorage.setItem(expiryKey, expiryDate.toISOString());
 
   alert(`✅ Activated Successfully for ${days} Days`);
-
   checkExpiry();
 }
 
@@ -147,13 +136,18 @@ function checkExpiry() {
 window.onload = setupSubscription;
 
 /* ===================================================== */
-/* ✅ PREMIUM TAMIL TRANSLATOR (NO SKIP NAMES) */
+/* ✅ PREMIUM TAMIL TRANSLATOR (2026 FIXED OUTPUT) */
 /* ===================================================== */
 async function translateTamil(btn) {
-  let tamilBox = btn.nextElementSibling;
+
+  let msgBox = btn.closest(".msg.bot");
+  let tamilBox = msgBox.querySelector(".tamil-output");
+
   tamilBox.innerHTML = "⏳ Translating...";
 
   let englishText = btn.getAttribute("data-text");
+
+  btn.disabled = true;
 
   try {
     let response = await fetch("/api/chat", {
@@ -161,13 +155,12 @@ async function translateTamil(btn) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message:
-          "Translate the following English text into Tamil EXACTLY.\n\n" +
+          "Translate the following English text into NATURAL Tamil.\n\n" +
           "Rules:\n" +
-          "- Do not skip any words\n" +
-          "- Keep names like Tamil, Telugu, Hindi, Malayalam unchanged\n" +
-          "- Do not summarize\n" +
-          "- Only translate exactly\n\n" +
-          "Text:\n" +
+          "- Do not change names (Coffee, Tamil, Hindi)\n" +
+          "- Keep meaning accurate\n" +
+          "- Write clean spoken Tamil\n" +
+          "- No weird words\n\n" +
           englishText,
       }),
     });
@@ -180,36 +173,34 @@ async function translateTamil(btn) {
       </div>
     `;
 
-    btn.disabled = true;
     btn.innerText = "✅ Tamil Shown";
+
   } catch (err) {
     tamilBox.innerHTML = "❌ Translation Failed";
+    btn.disabled = false;
+    btn.innerText = "🌐 Tamil Want? Click Here";
   }
 }
 
 /* ===================================================== */
-/* ✅ SEND MESSAGE + ULTRA PREMIUM SMART LINKS */
+/* ✅ SEND MESSAGE */
 /* ===================================================== */
 async function sendMessage() {
+
   let input = document.getElementById("userInput");
   let msg = input.value.trim();
   if (msg === "") return;
 
-  /* ✅ Send Button Click Sound */
-  if (clickSound) {
-    clickSound.currentTime = 0;
-    clickSound.play();
-  }
+  if (clickSound) clickSound.play();
 
   let chatBox = document.getElementById("chatBox");
 
-  chatBox.innerHTML += `<div class="msg user">${msg}</div>`;
+  chatBox.innerHTML += `<div class="msg user">${escapeHTML(msg)}</div>`;
   input.value = "";
 
   let botDiv = document.createElement("div");
   botDiv.className = "msg bot";
 
-  /* Typing Animation */
   botDiv.innerHTML = `
     <div class="typing">
       <span></span><span></span><span></span>
@@ -227,79 +218,22 @@ async function sendMessage() {
     });
 
     let data = await response.json();
-    if (data.error) {
-      botDiv.innerHTML = "❌ " + data.error;
-      return;
-    }
-
     let englishReply = data.reply;
+
     let keyword = extractKeyword(msg);
     let category = detectCategory(msg);
 
-    /* ✅ SMART YOUTUBE QUERIES */
-    let q1, q2, q3, q4, q5;
+    /* Smart Queries */
+    let q1 = msg + " explained";
+    let q2 = msg + " tutorial";
+    let q3 = msg + " details";
 
-    if (category === "food") {
-      q1 = msg + " recipe";
-      q2 = msg + " step by step";
-      q3 = msg + " hotel style";
-      q4 = msg + " tips";
-      q5 = msg + " cooking video";
-    } else if (category === "place") {
-      q1 = msg + " tourism";
-      q2 = msg + " famous places";
-      q3 = msg + " travel guide";
-      q4 = msg + " culture";
-      q5 = msg + " map";
-    } else if (category === "person") {
-      q1 = msg + " biography";
-      q2 = msg + " interview";
-      q3 = msg + " achievements";
-      q4 = msg + " life story";
-      q5 = msg + " latest news";
-    } else {
-      q1 = msg + " explained";
-      q2 = msg + " tutorial";
-      q3 = msg + " examples";
-      q4 = msg + " details";
-      q5 = msg + " information";
-    }
-
-    /* ✅ SMART INSTAGRAM TAGS */
-    let ig1, ig2, ig3, ig4, ig5;
-
-    if (category === "food") {
-      ig1 = keyword;
-      ig2 = keyword + "recipe";
-      ig3 = keyword + "food";
-      ig4 = keyword + "cooking";
-      ig5 = keyword + "homemade";
-    } else if (category === "place") {
-      ig1 = keyword;
-      ig2 = keyword + "tourism";
-      ig3 = keyword + "travel";
-      ig4 = keyword + "culture";
-      ig5 = keyword + "explore";
-    } else if (category === "person") {
-      ig1 = keyword;
-      ig2 = keyword + "biography";
-      ig3 = keyword + "life";
-      ig4 = keyword + "legend";
-      ig5 = keyword + "inspiration";
-    } else {
-      ig1 = keyword;
-      ig2 = keyword + "facts";
-      ig3 = keyword + "info";
-      ig4 = keyword + "knowledge";
-      ig5 = keyword + "trending";
-    }
-
-    /* ✅ Final Output */
+    /* Final Bot Output */
     botDiv.innerHTML = `
-      <p>${englishReply.replace(/\n/g, "<br>")}</p>
+      <div class="text">${englishReply.replace(/\n/g, "<br>")}</div>
 
       <button class="tamil-btn"
-        data-text="${englishReply.replace(/"/g, "&quot;")}"
+        data-text="${escapeHTML(englishReply)}"
         onclick="translateTamil(this)">
         🌐 Tamil Want? Click Here
       </button>
@@ -307,29 +241,14 @@ async function sendMessage() {
       <div class="tamil-output"></div>
 
       <div class="link-box">
-        <h4>🎥 YouTube Links</h4>
+        <h4>🎥 YouTube Search</h4>
         <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q1)}">▶ ${q1}</a>
         <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q2)}">📌 ${q2}</a>
         <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q3)}">⭐ ${q3}</a>
-        <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q4)}">🔥 ${q4}</a>
-        <a target="_blank" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q5)}">🎬 ${q5}</a>
-      </div>
-
-      <div class="link-box">
-        <h4>📷 Instagram Tags</h4>
-        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig1}/">#${ig1}</a>
-        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig2}/">#${ig2}</a>
-        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig3}/">#${ig3}</a>
-        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig4}/">#${ig4}</a>
-        <a target="_blank" href="https://www.instagram.com/explore/tags/${ig5}/">#${ig5}</a>
       </div>
     `;
 
-    /* ✅ Reply Sound */
-    if (replySound) {
-      replySound.currentTime = 0;
-      replySound.play();
-    }
+    if (replySound) replySound.play();
 
     chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -339,18 +258,17 @@ async function sendMessage() {
 }
 
 /* ===================================================== */
-/* ✅ VOICE INPUT + MIC SOUND */
+/* ✅ VOICE INPUT + MIC GLOW */
 /* ===================================================== */
 function startVoice() {
-  if (clickSound) {
-    clickSound.currentTime = 0;
-    clickSound.play();
-  }
 
   if (!("webkitSpeechRecognition" in window)) {
     alert("Voice not supported");
     return;
   }
+
+  let micBtn = document.querySelector(".voice-btn");
+  micBtn.classList.add("listening");
 
   let recognition = new webkitSpeechRecognition();
   recognition.lang = "en-US";
@@ -359,6 +277,10 @@ function startVoice() {
   recognition.onresult = function (e) {
     document.getElementById("userInput").value =
       e.results[0][0].transcript;
+  };
+
+  recognition.onend = function () {
+    micBtn.classList.remove("listening");
   };
 }
 
