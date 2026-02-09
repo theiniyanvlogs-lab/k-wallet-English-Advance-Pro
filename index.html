@@ -15,7 +15,9 @@
 
 <body>
 
+<!-- ===================================================== -->
 <!-- ✅ HEADER (Single Line Layout) -->
+<!-- ===================================================== -->
 <header class="topbar">
 
   <!-- ✅ TITLE -->
@@ -43,30 +45,29 @@
 
 </header>
 
+<!-- ===================================================== -->
 <!-- ✅ CHAT AREA -->
+<!-- ===================================================== -->
 <main class="chat-area" id="chatBox"></main>
 
-<!-- ✅ INPUT BAR -->
+<!-- ===================================================== -->
+<!-- ✅ INPUT BAR (Footer Clean Version) -->
+<!-- ===================================================== -->
 <footer class="input-bar">
 
+  <!-- ✅ USER INPUT (Auto Focus Enabled) -->
   <input
     type="text"
     id="userInput"
     placeholder="Type your message..."
     autocomplete="off"
+    autofocus
   />
 
-  <!-- ✅ VOICE BUTTON + Listening Text -->
-  <div class="voice-wrap">
-
-    <button type="button" class="voice-btn" onclick="startVoice()">
-      🎤
-    </button>
-
-    <!-- ✅ Listening Text (Hidden until mic active) -->
-    <span class="listening-text">Listening...</span>
-
-  </div>
+  <!-- ✅ VOICE BUTTON -->
+  <button type="button" class="voice-btn" onclick="startVoice()">
+    🎤
+  </button>
 
   <!-- ✅ SEND BUTTON -->
   <button type="button" class="send-btn" onclick="sendMessage()">
@@ -75,11 +76,12 @@
 
 </footer>
 
+<!-- ===================================================== -->
 <!-- ✅ EXPIRED / TRIAL BOX -->
+<!-- ===================================================== -->
 <div id="expiredBox" class="expired-box">
 
   <p>🔑 Get Trial Password (7 Days)</p>
-
   <p>❌ Trial/Subscription Finished</p>
 
   <a href="https://wa.me/917200893968?text=Hi,%20I%20need%20subscription%20password%20for%20Kwallet%20Chatbot"
@@ -90,9 +92,28 @@
 
 </div>
 
+<!-- ===================================================== -->
 <!-- ✅ Registry Path -->
+<!-- ===================================================== -->
 <script>
   const REGISTRY_PATH = "./data/registry.json";
+</script>
+
+<!-- ===================================================== -->
+<!-- ✅ ENTER KEY SEND SUPPORT -->
+<!-- ===================================================== -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("userInput");
+
+    // ✅ Press Enter = Send Message
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  });
 </script>
 
 <!-- ✅ Main Script -->
